@@ -47,16 +47,27 @@ def delete_books(book_id):
     books = [b for b in books if b["id"]!=book_id]
     return jsonify({"message":"book was Deleted"})
 
-@app.route("/books/<int:book_id>", methods=["PUT"])
+@app.route("/books/<int:book_id>", methods=["UPDATE"])
 @cross_origin()
-def update_books(book_id):
-    book = next((b for b in books if b["id"]!=book_id), None)
+def update_books_custom_endpoint(book_id):
+    book = next((b for b in books if b["id"]==book_id), None)
     if book: 
         data = request.get_json()
         book.update(data)
         return jsonify(book), 200
     else:
         return jsonify({"message":"Book not found"}), 404
+
+@app.route("/books/<int:book_id>", methods=["PUT"])
+@cross_origin()
+def update_books(book_id):
+    book = next((b for b in books if b["id"] == book_id), None)
+    if book:
+        data = request.get_json()
+        book.update(data)
+        return jsonify(book), 200
+    else:
+        return jsonify({"message": "Book not found"}), 404
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port="5000" ,debug=True)
